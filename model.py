@@ -79,6 +79,7 @@ print(max(agents))
 print(max(agents, key=operator.itemgetter(1)))
 
 
+# Plotting the agents
 matplotlib.pyplot.ylim(0,99)
 matplotlib.pyplot.xlim(0,99)
 matplotlib.pyplot.scatter(agents[0][1], agents[0][0], color='red')
