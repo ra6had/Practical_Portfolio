@@ -1,10 +1,17 @@
+# Project Name: Building an Agent Based Model
+# Author: Rashad a.k. Ahmed
+# Version: Shrinking Code I (23.01.2019)
+
+
+
 import random
 import operator
 import matplotlib.pyplot
 
+# Initializing agents list
 agents = []
 
-# Initializing first agent's position and appending it to agents.
+# Initializing first agent's position and appending it to agents list.
 agents.append([random.randint(0,99), random.randint(0,99)])
 
 
@@ -32,7 +39,7 @@ else:
     agents[0][1] -= 1
 
 
-# Initializing second agent's position and appending it to agents.
+# Repeating the above steps for a second agent.
 agents.append([random.randint(0,99), random.randint(0,99)])
 
 
