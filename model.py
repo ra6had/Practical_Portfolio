@@ -16,12 +16,12 @@ agents.append([random.randint(0,99), random.randint(0,99)])
 
 
 # Random walk one step.
-if random.random() < 0.5:
+if random.random() < 0.5: # motion in the y-axis
     agents[0][0] += 1
 else:
     agents[0][0] -= 1
 
-if random.random() < 0.5:
+if random.random() < 0.5: # motion in the x-axis
     agents[0][1] += 1
 else:
     agents[0][1] -= 1
