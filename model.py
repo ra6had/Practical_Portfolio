@@ -1,7 +1,7 @@
 """
 Project Name: Building an Agent Based Model
 Author: Rashad a.k. Ahmed
-Version: Shrinking Code 2 v.2 (03.02.2019)
+Version: Classes and Agents v.1 (06.03.2019)
 
 This code generates 10 simple agents represented by a set of random
 coordinates in a confined 2D space.
@@ -27,6 +27,12 @@ def distances(agents):
     """
     distance_set = []
     i = 0
+    
+    """
+    Compute the distances between all agents wihtout redundancies i.e. without 
+    the distance between an agent and itself and the distances between an 
+    agent and the ones before it
+    """
     for i in range(len(agents)):
         for j in range(len(agents)):
             if j > i:
@@ -36,16 +42,19 @@ def distances(agents):
     return distance_set
     
 
-# Initializing number of agents and iterations
+# Set the number of agents and iterations
 num_of_agents = 10
 num_of_iterations = 100 
 
 # Initializing agents list
 agents = []
 
+# Create the agents
 for i in range(num_of_agents):
     agents.append(agentframework.Agent())
     
+# Plot initial agents position
+matplotlib.pyplot.xlim(0, 99)    
 matplotlib.pyplot.ylim(0, 99)
 for i in range(len(agents)):
     matplotlib.pyplot.scatter(agents[i].x, agents[i].y)
@@ -53,13 +62,13 @@ for i in range(len(agents)):
 matplotlib.pyplot.show()
 
 
-
+# Move agents num_of_iteration steps
 for agent in agents:
     agent.move(num_of_iterations)
     
 
 
-#Plot the final position of agents
+# Plot the final position of agents
 matplotlib.pyplot.xlim(0, 99)
 matplotlib.pyplot.ylim(0, 99)
 for i in range(len(agents)):
