@@ -9,11 +9,11 @@ The agents take 100 steps in random directions, and handle edges like pac-man
 The final position of the agents are printed and plotted.
 """
 
-import random
+#import random
 import matplotlib.pyplot
 import agentframework
-
-
+import csv
+import contextlib
 
 def distances(agents):
     """
@@ -40,39 +40,68 @@ def distances(agents):
                              ((agents[i].x - agents[j].x)**2))**0.5)
                 distance_set.append(distance)
     return distance_set
+
+
+
+# Open and read in the data file as a csv and store values in reader as floats
+with open('in.txt', newline='') as f:
+    reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+    # Create and populate the environment variable with data 
+    #from the csv file just read.
+    environment = []
+    for line in reader:
+        rowlist = []
+        for value in line:
+            rowlist.append(value)
+        environment.append(rowlist)
+   
+
+# Plot the environment 
+matplotlib.pyplot.imshow(environment)
+matplotlib.pyplot.show()
     
+  
 
 # Set the number of agents and iterations
 num_of_agents = 10
 num_of_iterations = 100 
 
-# Initializing agents list
+
+# Initialize and populate the agents list
 agents = []
-
-# Create the agents
 for i in range(num_of_agents):
-    agents.append(agentframework.Agent())
+    agents.append(agentframework.Agent(environment))
     
-# Plot initial agents position
-matplotlib.pyplot.xlim(0, 99)    
-matplotlib.pyplot.ylim(0, 99)
-for i in range(len(agents)):
-    matplotlib.pyplot.scatter(agents[i].x, agents[i].y)
-       
-matplotlib.pyplot.show()
 
 
-# Move agents num_of_iteration steps
+# Move agents num_of_iteration steps and eat 10 environment values
 for agent in agents:
     agent.move(num_of_iterations)
+    agent.eat(15)
     
 
 
-# Plot the final position of agents
+# Plot the final position of agents on top of the altered environment
 matplotlib.pyplot.xlim(0, 99)
 matplotlib.pyplot.ylim(0, 99)
-for i in range(len(agents)):
-    matplotlib.pyplot.scatter(agents[i].x, agents[i].y)
-       
+matplotlib.pyplot.imshow(environment)
+for i in range(num_of_agents):
+    matplotlib.pyplot.scatter(agents[i].x, agents[i].y)  
 matplotlib.pyplot.show()
 
+# Store the altered environment in dataout.csv
+with open('dataout.csv', 'w', newline='') as f2:
+    writer = csv.writer(f2)
+
+    for row in environment:
+        writer.writerow(row)
+
+# Compute the amount of environment values stored by all agents
+with open('store.txt', 'a') as f3:
+    with contextlib.redirect_stdout(f3):
+        total_store = 0
+        for agent in agents:
+            total_store += agent.store
+        print(total_store)
+print(agents[1])
+print(help(agentframework.Agent.eat))
