@@ -1,7 +1,7 @@
 """
 Project Name: Building an Agent Based Model
 Author: Rashad a.k. Ahmed
-Version: Classes and Agents v.1 (06.03.2019)
+Version: I/O v.2 (08.03.2019)
 
 This code generates 10 simple agents represented by a set of random
 coordinates in a confined 2D space.
@@ -60,11 +60,10 @@ with open('in.txt', newline='') as f:
 matplotlib.pyplot.imshow(environment)
 matplotlib.pyplot.show()
     
-  
 
 # Set the number of agents and iterations
 num_of_agents = 10
-num_of_iterations = 100 
+num_of_iterations = 10 
 
 
 # Initialize and populate the agents list
@@ -77,13 +76,13 @@ for i in range(num_of_agents):
 # Move agents num_of_iteration steps and eat 10 environment values
 for agent in agents:
     agent.move(num_of_iterations)
-    agent.eat(15)
-    
+    agent.eat(200)
+
 
 
 # Plot the final position of agents on top of the altered environment
-matplotlib.pyplot.xlim(0, 99)
-matplotlib.pyplot.ylim(0, 99)
+matplotlib.pyplot.xlim(0, len(environment[0]))
+matplotlib.pyplot.ylim(0, len(environment))
 matplotlib.pyplot.imshow(environment)
 for i in range(num_of_agents):
     matplotlib.pyplot.scatter(agents[i].x, agents[i].y)  

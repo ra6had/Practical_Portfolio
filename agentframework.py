@@ -1,11 +1,11 @@
 """
-A framework for creating agents with the ability to move in 2D and consume
-resources from their environment. The environment is stored inside each agent
-and therefore it can be shared among multiple agents.
+A framework for creating agents with the ability to move in a 2D environment
+and consume resources from it. The environment is stored inside each agent
+and therefore, the same environment can be shared among multiple agents.
 
 Classes:
 
-Agents -- an agent class that can move and consume from its environment
+Agents -- an agent class that can move withn, and consume from its environment
 """
 
 import random
@@ -25,11 +25,12 @@ class Agent():
     """
    
     def __init__(self, environment):
-        self.y = random.randint(0,99)
-        self.x = random.randint(0,99)
+       
         self.environment = environment
         self.store = 0
-    
+        self.y = random.randint(0, len(self.environment))
+        self.x = random.randint(0, len(self.environment[0]))
+        
     def __str__(self):
         return "I'm an agent in: (" + str(self.x) + ',' + str(self.y) + ").\
         With a store of: " + str(self.store)
@@ -44,14 +45,14 @@ class Agent():
         for i in range(steps):
             
             if random.random() < 0.5:
-                self.y = (self.y + 1) % 100
+                self.y = (self.y + 1) % len(self.environment[0])
             else:
-                self.y = (self.y - 1) % 100
+                self.y = (self.y - 1) % len(self.environment[0])
             
             if random.random() > 0.5:
-                self.x = (self.x + 1) % 100
+                self.x = (self.x + 1) % len(self.environment)
             else:
-                self.x = (self.x - 1) % 100
+                self.x = (self.x - 1) % len(self.environment)
     
     
     def eat(self, amount):
