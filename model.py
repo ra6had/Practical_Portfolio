@@ -1,29 +1,107 @@
 """
-Project Name: Building an Agent Based Model
-Author: Rashad a.k. Ahmed
-Version: Final v.1 (08.03.2019)
+Author: Rashad A.K.Ahmed
+Lisence: GNU
 
-This code generates 10 simple agents represented by a set of random
-coordinates in a confined 2D space.
-The agents take 100 steps in random directions, and handle edges like pac-man
-The final position of the agents are printed and plotted.
+This appilcation uses the agentframework.py module to instantiate Agent
+objects in an environment. The Agent objects are given random positions
+confining them to their environment. The environment is an image like
+csv file where every pixel value represents the amount of resources in the
+pixel's location.
+
+The Agent objects then move randomly in their environment consuming the
+available resources and sharing them with their neighbours.
+
+An update(frames) function is defined to update the plot with every iteration.
+The plot shows the Agent objects moving and the environment changing as the
+Agents consume it.
+
+Finally a DataFrame is created with every Agent's initial and final locations
+together with the amount of resources they consumed from the environment.
+
+
 """
 
-#import random
-import matplotlib.pyplot
-import agentframework
+
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import csv
-import contextlib
-import random
+import pandas as pd
+import agentframework
 
 #Set the number of agents and iterations
 num_of_agents = 10
-num_of_iterations = 5
-bite = 40
+num_of_iterations = 10
+bite = 100
+steps = 10
 neighbourhood = 100
+fig = plt.figure(figsize=(15, 15))
+plt.style.use('classic')
+plt.set_cmap('Greens')
 
+def update(frames):
+	"""
+	Update the animation frames.
 
+	This function is passed into animation.FuncAnimation(). It utelizes
+	the	global variable "num_of_iterations" to simultaneously iterate through
+	the agents making them perform certain methods and update the animation
+	frame after each iteration.
 
+	"""
+	# Declare the global variables
+	global num_of_iterations
+	global dataframe
+
+	"""
+	The following if statement ensures that the animation and the methods
+	are called a definate number of times, i.e. "num_of_iterations"
+
+	Once the iterations are finished, record the final locations and the
+	amount of resources in each agents store and finally convert the output
+	into a dataframe and write it to a csv file
+	"""
+	if num_of_iterations > 0:
+		fig.clear()
+		plt.title('Sheep are busy eating') # Sheep are still eating
+		# make each agent move, eat and share
+		for agent in agents:
+			agent.move(steps)
+			agent.eat(bite)
+			agent.share_with_neighbours(neighbourhood)
+		plt.imshow(environment, origin='lower')
+		plt.colorbar()
+		plt.xlim(0, len(environment[0]))
+		plt.ylim(0, len(environment))
+		for i in range(num_of_agents):
+			plt.scatter(agents[i].x,agents[i].y)
+		num_of_iterations -= 1 # Reduce by one
+#		print('Another bite, please!') #should be printed num_of_iterations
+	else:
+#		print('baa baa, no more grass please!')
+		plt.title('Sheep are done eating')
+		dataframe = pd.DataFrame()
+		end_location_x = []
+		end_location_y = []
+
+		# Record the agents' final location
+		for i in range(len(agents)):
+			end_location_x.append(agents[i].x)
+			end_location_y.append(agents[i].y)
+
+		# Construct a dictionary for each aggent then append it to dataframe
+		for i in range(len(agents)):
+			df = {}
+			df['Store'] = agents[i].store
+			df['Final Location X'] =  end_location_y[i]
+			df['Final Location Y'] =  end_location_y[i]
+			df['Initial Location X'] = st_location_x[i]
+			df['Initial Location Y'] = st_location_y[i]
+			dataframe = dataframe.append(df, ignore_index=True)
+		print(dataframe)
+
+		# Write the output dataframe to a csv file
+		with open('output.csv', 'w') as datafile:
+			dataframe.to_csv(datafile)
 
 
 # Open and read in the data file as a csv and store values in reader as floats
@@ -38,50 +116,23 @@ with open('in.txt', newline='') as f:
             rowlist.append(value)
         environment.append(rowlist)
 
-# Plot the environment
-matplotlib.pyplot.imshow(environment, origin='lower')
-matplotlib.pyplot.show()
 
-# Initialize and populate the agents list
+
+
+# Instantiate agents and populate the agents list
 agents = []
 for i in range(num_of_agents):
     agents.append(agentframework.Agent(environment, agents))
 
-# Move agents num_of_iteration steps and eat a bite off the environment
-random.shuffle(agents)
+# Record the initial location of agents
+st_location_x = []
+st_location_y = []
 for agent in agents:
-    agent.move(num_of_iterations)
-    agent.eat(bite)
-    print(agent.store)
-    agent.share_with_neighbours(neighbourhood)
+	st_location_x.append(agent.x)
+	st_location_y.append(agent.y)
 
-for agent in agents:
-	print (agent.store)
 
-for agent in agents:
-    print("agent's store is: " + str(agent.store))
-
-# Plot the final position of agents on top of the altered environment
-matplotlib.pyplot.xlim(0, len(environment[0]))
-matplotlib.pyplot.ylim(0, len(environment))
-matplotlib.pyplot.imshow(environment, origin='lower')
-for i in range(num_of_agents):
-    matplotlib.pyplot.scatter(agents[i].x, agents[i].y)
-matplotlib.pyplot.show()
-
-# Store the altered environment in dataout.csv
-with open('dataout.csv', 'w', newline='') as f2:
-    writer = csv.writer(f2)
-
-    for row in environment:
-        writer.writerow(row)
-
-# Compute the amount of environment values stored by all agents
-with open('store.txt', 'a') as f3:
-    with contextlib.redirect_stdout(f3):
-        total_store = 0
-        for agent in agents:
-            total_store += agent.store
-        print(total_store)
-print(agents[1])
-print(help(agentframework.Agent.eat))
+# Animate the agents
+ani = animation.FuncAnimation(fig, update, num_of_iterations,\
+							   interval=1, repeat=False)
+plt.show()

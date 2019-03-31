@@ -1,21 +1,27 @@
 """
+agentframework module
+
+Author: Rashad A.K. Ahmed
+License: GNU
+
+
 A framework for creating agents with the ability to move in a 2D environment
 and consume resources from it. The environment is stored inside each agent
 and therefore, the same environment can be shared among multiple agents.
 
 Classes:
 
-Agents -- an agent class that can move withn, and consume from its environment
+Agents -- an agent class that can move within, and consume from its environment
 """
 
 import random
+import numpy as np
 
 class Agent():
-    """
-    Create an Agent class.
-
-    Arguments:
-    environment -- 2D indexed data representing the environment with which the
+	"""
+	Create an Agent class.
+	Arguments:
+	environment -- 2D indexed data representing the environment with which the
                    the agents will interact.
 	agents -- a list of agents with which the agent shares the enevironment
 
@@ -23,51 +29,56 @@ class Agent():
     move -- takes in a number of steps and moves agent in random directions.
     eat -- takes in amount and makes the agent eat (consume) that amount from
            its environment if the amount is available at the agent's location.
-    """
+	distance_between -- returns the distance between two Agents
+	share_with_neighbours -- share resources with neighbours in a user defines
+							 neighbourhood.
 
-    def __init__(self, environment, agents):
-	    self.environment = environment
-	    self.agents = agents
-	    self.store = 0
-	    self.y = random.randint(0, len(self.environment))
-	    self.x = random.randint(0, len(self.environment[0]))
+      """
 
-    def __str__(self):
-        return "I'm an agent in: (" + str(self.x) + ',' + str(self.y) + ").\
+	def __init__(self, environment, agents):
+		self.environment = environment
+		self.agents = agents
+		self.store = 0
+		self.resources = np.sum(self.environment)
+		self.y = random.randint(0, len(self.environment))
+		self.x = random.randint(0, len(self.environment[0]))
+
+	def __str__(self):
+		return "I'm an agent in: (" + str(self.x) + ',' + str(self.y) + ").\
 With a store of: " + str(self.store)
 
 
-    def move(self, steps=10):
-        """Moves the agent a number of steps in random directions
+	def move(self, steps=10):
+		"""Moves the agent a number of steps in random directions
 
         keyword arguments:
         steps -- an intiger representing the number of steps
         """
-        for i in range(steps):
+		for i in range(steps):
 
-            if random.random() < 0.5:
-                self.y = (self.y + 1) % len(self.environment[0])
-            else:
-                self.y = (self.y - 1) % len(self.environment[0])
+			if random.random() < 0.5:
+				self.y = (self.y + 1) % len(self.environment[0])
+			else:
+				self.y = (self.y - 1) % len(self.environment[0])
 
-            if random.random() > 0.5:
-                self.x = (self.x + 1) % len(self.environment)
-            else:
-                self.x = (self.x - 1) % len(self.environment)
+			if random.random() > 0.5:
+				self.x = (self.x + 1) % len(self.environment)
+			else:
+				self.x = (self.x - 1) % len(self.environment)
 
 
-    def eat(self, amount):
-        """Make the agents eat a given amount from its environment
+	def eat(self, amount):
+		"""Make the agents eat a given amount from its environment
 
         arguments:
         amount -- an intiger representing the amount to eat from the
         environment
         """
-        if self.environment[self.y][self.x] > amount:
-            self.environment[self.y][self.x] -= amount
-            self.store += amount
+		if self.environment[self.y][self.x] > amount:
+			self.environment[self.y][self.x] -= amount
+			self.store += amount
 
-    def distance_between(self, agent):
+	def distance_between(self, agent):
 	    """
 	    compute distances between agent and other agents in its environment.
 
@@ -78,18 +89,25 @@ With a store of: " + str(self.store)
 	    """
 	    return abs(((self.y - agent.y)**2 + ((self.x - agent.x))**0.5))
 
-    def share_with_neighbours(self, neighbourhood):
-        """
+	def share_with_neighbours(self, neighbourhood):
+		"""
         Share store with neighbouring agents.
 
 		arguments:
 		neighbourhood -- a number representing the neighbourhood
 						 radius around the agent.
 	    """
-        self.neighbourhood = neighbourhood
-        for agent in self.agents:
-            if self.distance_between(agent) <= self.neighbourhood:
-                sum_store = self.store + agent.store
-                average = sum_store/2
-                self.store = average
-                agent.store = average
+		self.neighbourhood = neighbourhood
+		for agent in self.agents:
+			# Do not share with self
+			if self.agents.index(agent) != self.agents.index(self):
+				# Only share with proximate agents
+				if self.distance_between(agent) <= self.neighbourhood:
+					sum_store = self.store + agent.store
+					average = sum_store/2
+					self.store = average
+					agent.store = average
+				else:
+					pass
+			else:
+				pass
